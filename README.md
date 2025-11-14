@@ -1,124 +1,240 @@
-# ポートフォリオ最適化
+# Lightning Network Route Optimization Using Quantum Annealing
 
-Fixstars Amplify AE を使用した株式ポートフォリオ最適化のデモンストレーションプログラムです。
+Implementation of Lightning Network transaction routing optimization using quantum annealing (Fixstars Amplify).
 
-## 概要
+[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-6%2F6%20passing-brightgreen.svg)]()
 
-このプログラムは、Fixstars Amplify を利用してポートフォリオを最適化します。最適化にはヒストリカルデータ方式に基づく推計値を用います。
+## 📖 Overview
 
-- 株価データの取得
-- 最適ポートフォリオ求解のための定式化及びソルバの実装
-- 最適化の実行と評価
-- 運用シミュレーション
+This project implements the research published in the 2018 Mitou Target Program: "Development of Blockchain Acceleration Technology Using Annealing."
 
-## 必要な環境
+It realizes efficient route selection for Lightning Network (LN) transaction routing problems using quantum annealing machines.
 
-- Python 3.8以上
-- pip（Pythonパッケージマネージャー）
+### Background
 
-## セットアップ手順
+In the Lightning Network, an off-chain technology designed to solve Bitcoin's scalability problem, transaction routing is a critical challenge. This implementation selects optimal routes while satisfying the following constraints:
 
-### 1. 必要なパッケージのインストール
+1. **Capacity Constraint**: Transactions cannot pass through channels exceeding their capacity
+2. **Route Constraint**: Each transaction selects only one route
+3. **Distance Minimization**: Minimize route distance (number of hops) to minimize fees
+
+## 🌟 Key Features
+
+- **Graph Generation**: Generate scale-free networks that simulate Lightning Network topology
+- **Route Finding**: Generate candidate routes using Dijkstra's algorithm
+- **Hamiltonian Formulation**: Build objective functions for quantum annealing
+- **Optimization Execution**: Route optimization using Fixstars Amplify AE
+- **Detailed Visualization**: Statistical information and analysis of results
+
+## 🚀 Quick Start
+
+### Requirements
+
+- Python 3.8 or higher
+- pip
+- Fixstars Amplify account (API token)
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/yourusername/lightning-network-routing.git
+cd lightning-network-routing/lightning_network
+
+# Create virtual environment (recommended)
+python3 -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 2. Fixstars Amplify AE のAPIトークンの取得と設定
+### API Token Configuration
 
-#### 2.1 APIトークンの取得
-
-1. [Fixstars Amplify](https://amplify.fixstars.com/) にアクセス
-2. アカウントを作成してログイン
-3. APIトークンを取得
-
-#### 2.2 .envファイルの設定
-
-`.env`ファイルを開き、取得したAPIトークンを設定します:
+1. Create an account at [Fixstars Amplify](https://amplify.fixstars.com/)
+2. Obtain your API token
+3. Create a `.env` file in the project root
+4. Add the following content:
 
 ```bash
-# .envファイルの内容
-AMPLIFY_TOKEN=ここに取得したAPIトークンを貼り付ける
+AMPLIFY_TOKEN=your_api_token_here
 ```
 
-**注意**: `.env`ファイルはGitにコミットされません（セキュリティのため）。
-
-## 動作確認
-
-### パッケージのインポートテスト
+### Basic Usage
 
 ```bash
-python3 test_imports.py
+# Run basic example
+python examples/basic_example.py
+
+# Run full paper replication (large scale)
+python examples/paper_replication.py
 ```
 
-すべてのパッケージが正常にインポートできることを確認します。
-
-### .envファイルの読み込みテスト
-
-```bash
-python3 test_env.py
-```
-
-APIトークンが正常に読み込まれることを確認します。
-
-### メインプログラムの実行
-
-```bash
-python3 portfolio.py
-```
-
-**注意**: 
-- このプログラムは、`../../../storage/portfolio/dummy_stock_price.csv` のパスにダミーデータを期待しています。
-- データファイルが見つからない場合は、`load_stock_prices()`関数内のパスを適切に変更してください。
-- Jupyter Notebookで実行することを想定したコードのため、通常のPythonスクリプトとして実行する場合は調整が必要な場合があります。
-
-## ファイル構成
-
-```
-.
-├── portfolio.py           # メインプログラム
-├── requirements.txt       # 必要なパッケージリスト
-├── .env                   # APIトークン設定ファイル（要作成・Git管理外）
-├── .env.example          # .envファイルのテンプレート
-├── test_imports.py       # パッケージインポートテスト
-├── test_env.py           # 環境変数読み込みテスト
-└── README.md             # このファイル
-```
-
-## トラブルシューティング
-
-### パッケージのインポートエラー
-
-```bash
-pip install -r requirements.txt
-```
-
-でパッケージを再インストールしてください。
-
-### APIトークンが読み込まれない
-
-1. `.env`ファイルが存在することを確認
-2. `.env`ファイルに`AMPLIFY_TOKEN`が正しく記載されていることを確認
-3. `test_env.py`を実行して確認
-
-### データファイルが見つからない
-
-`portfolio.py`の`load_stock_prices()`関数内のパスを、実際のデータファイルの場所に合わせて変更してください。
+### Python Code Example
 
 ```python
-def load_stock_prices() -> pd.DataFrame:
-    return pd.read_csv(
-        "your/data/path/dummy_stock_price.csv",  # ここを変更
-        index_col="Date",
-        parse_dates=True,
-    )
+from src.graph_generator import LightningNetworkGraph
+from src.route_finder import RouteFinder
+from src.optimizer import RouteOptimizer
+
+# Generate graph
+ln_graph = LightningNetworkGraph(
+    num_nodes=100,
+    num_channels=500,
+    capacity_range=(200, 900)
+)
+graph = ln_graph.generate()
+
+# Generate transactions
+route_finder = RouteFinder(graph, num_route_candidates=3)
+transactions = route_finder.generate_transactions(num_transactions=4)
+
+# Run optimization
+optimizer = RouteOptimizer(ln_graph, use_cloud_solver=True)
+result = optimizer.optimize(transactions)
+
+# Display results
+optimizer.print_result(result, transactions)
 ```
 
-## 注意事項
+## 📊 Paper Experimental Settings
 
-※本サンプルプログラムは、Fixstars Amplify を利用した最適化アプリケーションのデモンストレーションを目的としています。この情報を基に実際の運用を行う際には、ユーザー自身の責任において実施してください。
+The settings used in the original paper:
 
-## ライセンス
+| Parameter | Value |
+|-----------|-------|
+| Number of Nodes | 2,000 |
+| Number of Channels | 20,000 |
+| Channels per Node | ~15-30 |
+| Channel Capacity Range | 200-900 |
+| Number of Transactions | 4 |
+| Transaction Amount Range | 200-600 |
+| Candidate Routes | 3 |
+| α (Route Constraint Weight) | 2 |
+| β (Distance Cost Weight) | (avg amount)² × 100 |
+| Execution Time | 10 seconds |
+| Bits Used | 361 bits |
 
-このプログラムの利用については、Fixstars Amplify の利用規約に従ってください。
+Run `examples/paper_replication.py` to fully replicate these settings.
 
+## 🏗️ Project Structure
+
+```
+lightning_network/
+├── src/
+│   ├── __init__.py
+│   ├── graph_generator.py      # Graph generation
+│   ├── route_finder.py         # Route finding
+│   ├── hamiltonian.py          # Hamiltonian formulation
+│   └── optimizer.py            # Optimization execution
+├── tests/
+│   ├── test_graph_generator.py
+│   └── test_route_finder.py
+├── examples/
+│   ├── basic_example.py        # Basic example
+│   └── paper_replication.py    # Paper replication
+├── docs/
+│   └── paper_summary.md        # Paper summary (Japanese)
+├── requirements.txt
+└── README.md
+```
+
+## 🧪 Testing
+
+```bash
+# Run all tests
+pytest tests/ -v
+
+# Run tests with coverage
+pytest tests/ --cov=src --cov-report=html
+```
+
+## 📈 Example Results
+
+```
+======================================================================
+Optimization Results
+======================================================================
+
+Execution time: 8.45s
+Objective value: 125.34
+Feasibility: ✓ All constraints satisfied
+
+Statistics:
+  Selected routes: 4
+  Total hops: 18
+  Average hops: 4.50
+  Total fees: 0.8234
+  Average fee: 0.2059
+
+Selected Routes:
+  Transaction 0 (8 -> 77, 375):
+    Route candidate 0: 8 -> 45 -> 23 -> 77
+    Hops: 3
+  ...
+```
+
+## 🔬 Technical Details
+
+### Hamiltonian Formulation
+
+This implementation combines three Hamiltonians:
+
+1. **Capacity Cost** (H_capacity):
+   - Represents channel capacity constraints
+   - Penalty: (usage - capacity)²
+
+2. **Route Constraint** (H_route):
+   - Each transaction selects only one route
+   - Constraint: Σ_j x[i][j] = 1
+
+3. **Distance Cost** (H_distance):
+   - Minimize route distance (number of hops)
+   - Contributes to fee minimization
+
+**Total Hamiltonian**:
+```
+H_total = H_capacity + α × H_route + β × H_distance
+```
+
+### Algorithm Flow
+
+1. **Graph Generation**: Generate scale-free network using Barabási-Albert model
+2. **Candidate Route Generation**: Generate 3 candidate routes per transaction using Dijkstra's algorithm
+3. **Hamiltonian Construction**: Formulate constraints and objective function for quantum annealing
+4. **Optimization Execution**: Search for optimal solution using Fixstars Amplify AE
+5. **Result Analysis**: Verify constraint satisfaction and statistical information
+
+## 📚 References
+
+- [Lightning Network Official Website](https://lightning.network/)
+- [Fixstars Amplify Documentation](https://amplify.fixstars.com/docs/)
+- 2018 Mitou Target Program: "Development of Blockchain Acceleration Technology Using Annealing"
+
+## 🤝 Contributing
+
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Authors
+
+This project was developed as an implementation of academic research. Qubit Chain in Hong Kong
+
+## 🙏 Acknowledgments
+
+- Authors of the original paper from the Mitou Target Program
+- Fixstars Amplify team
+- Lightning Network development community
+
+## 📮 Contact
+
+For questions or feedback, please use GitHub issues.
+
+---
+
+**Note**: This project is an implementation of academic research and does not guarantee suitability for use in actual Lightning Network deployments.
