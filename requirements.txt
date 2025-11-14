@@ -1,0 +1,18 @@
+# ポートフォリオ最適化に必要なパッケージ
+
+# データ分析
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Fixstars Amplify SDK
+amplify>=0.7.0
+
+# 可視化
+matplotlib>=3.7.0
+
+# 環境変数の読み込み
+python-dotenv>=1.0.0
+
+# 実際の株価データを取得する場合に必要（オプション）
+# pandas-datareader>=0.10.0
+
